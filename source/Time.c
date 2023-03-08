@@ -27,7 +27,7 @@ char Tm_Inicie (Tm_Control *tcp,
    /* Rutina para manejar el timer (HW) */
    tcp->atender = atender;
    
-   return SI;
+   return TRUE;
    };
                 
 /* Rutina para procesar el m�dulo (dentro del loop de polling) */				
@@ -37,7 +37,7 @@ void Tm_Procese (Tm_Control *tcp)
    Tm_periodo *pp;
    Tm_Timeout *tp;
    
-   if ( !(tcp->atender(SI)) )
+   if ( !(tcp->atender(TRUE)) )
       return;
       
    for (n = tcp->nper, pp = tcp->pp; n; ++pp, --n)
@@ -65,12 +65,12 @@ char Tm_Inicie_periodo (Tm_Control *tcp,
    Tm_Periodo *pp = tcp->pp + num_periodo;
    
    if (num_periodo >= tcp->nper)
-      return NO;
+      return FALSE;
       
    pp->banderas = TM_PER_F_ACTIVO;
    pp->contador = pp->periodo = periodo;
    
-   return SI;
+   return TRUE;
    };
 
 /* Desactivar un per�odo para que deje de funcionar */
@@ -82,15 +82,15 @@ void Tm_Termine_periodo (Tm_Control *tcp, Tm_Num num_periodo){
    pp->contador = pp->periodo = 0;
 }
 
-/* Verificar si hubo fin de conteo en un periodo */
+/* Verificar TRUE hubo fin de conteo en un periodo */
 char Tm_Hubo_periodo (Tm_Control *tcp, Tm_Num num_periodo){
    /*Se define un apuntador hacia la dirección del periodo*/
    Tm_Periodo *pp = tcp->pp + num_periodo;
-   /*Si la bandera esta activa retorna que hibo fin*/
+   /*TRUE la bandera esta activa retorna que hibo fin*/
    if(pp->banderas &= TM_PER_F_FC)
-      return SI;
+      return TRUE;
    else
-      return NO;
+      return FALSE;
 
 
 }
@@ -108,13 +108,13 @@ char Tm_Inicie_timeout (Tm_Control *tcp, Tm_Num num_timeout, Tm_Contador espera)
    /*Se define un apuntador  hacia la direeción del timeot a iniciar*/
    Tm_Timeout *tp = tcp->tp + num_timeout;
 
-   /*Se verifica que la posición del timeout sea válida*/
+   /*Se verifica que la poTRUEción del timeout sea válida*/
    if(num_timeout >= tcp->nto)
-      return NO;
+      return FALSE;
    
-   /* Se asigna el tiempo de espera para el timeout*/
+   /* Se aTRUEgna el tiempo de espera para el timeout*/
    *tp = espera;
-   return SI;
+   return TRUE;
 }
 
 /* Desactivar un timeout/retardo para que deje de funcionar */
@@ -122,22 +122,22 @@ void Tm_Termine_timeout (Tm_Control *tcp, Tm_Num num_timeout){
 
    /*Se define un apuntador  hacia la direción del timeot a desactivar*/
    Tm_Timeout *tp = tcp->tp + num_timeout;
-   /* Se asigna el valor 0 al timeout*/
+   /* Se aTRUEgna el valor 0 al timeout*/
    *tp =0;
    
 }
 
 
-/* Verificar si hubo timeout (o se completo el retardo) */
+/* Verificar TRUE hubo timeout (o se completo el retardo) */
 char Tm_Hubo_timeout (Tm_Control *tcp, Tm_Num num_timeout){
    /*Se define un apuntador  hacia la direción del timeot a desactivar*/
 
    Tm_Timeout *tp = tcp->tp + num_timeout;
-   /*Returna  NO si no está en 0 y SI de lo contrario*/
+   /*Returna  FALSE TRUE FALSE está en 0 y TRUE de lo contrario*/
    if(!*tp)
-      return NO;
+      return FALSE;
    else
-      return SI;
+      return TRUE;
 }
 
 /* == FIN DE RUTINAS DE INTERFAZ == */
