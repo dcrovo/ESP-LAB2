@@ -1,7 +1,7 @@
 /* Tiempo.h    Declaraciones del modulo de tiempo */
-#if !defined(TIEMPO_H)
+#if !defined(TIME_H)
 
-#define TIEMPO_H
+#define TIME_H
 
 #include <Utilities.h>
 
