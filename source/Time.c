@@ -1,6 +1,7 @@
 /* Tiempo.c    Implementaci�n del modulo de tiempo */
 #include <Time.h>
 
+
 /* Rutina para iniciar el m�dulo (su estructura de datos) */   
 char Tm_Inicie (Tm_Control *tcp,
                 Tm_Periodo *pp, 
