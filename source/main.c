@@ -49,8 +49,10 @@
 /*
  * @brief   Application entry point.
  */
-int main(void) {
 
+
+int main(void) {
+    UART_flow uart_config;
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
@@ -59,9 +61,8 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
-
-
-
+    uart_iniciar(&uart_config);
+    
     /*Loop de pooling*/
     while(1){
 

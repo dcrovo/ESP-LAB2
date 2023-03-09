@@ -35,7 +35,7 @@ char Tm_Inicie (Tm_Control *tcp,
 void Tm_Procese (Tm_Control *tcp)
    {
    Tm_Num n;
-   Tm_periodo *pp;
+   Tm_Periodo *pp;
    Tm_Timeout *tp;
    
    if ( !(tcp->atender(TRUE)) )
