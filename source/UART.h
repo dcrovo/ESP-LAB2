@@ -20,7 +20,7 @@
 typedef struct UART_flow{
     uart_config_t config;
     char flowctr;
-};
+}UART_flow;
 
 
 // Inicializa la comunicación serial con los valores requeridos
@@ -31,6 +31,3 @@ void uart_stop(UART_flow *ser_com);
 
 //Reanuda la comunicación serial
 void uart_start(UART_flow *ser_com);
-
-
-

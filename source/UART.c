@@ -1,7 +1,10 @@
+#include "UART.h"
+
 
 // Inicializa la comunicación serial con los valores requeridos
-void uart_iniciar(uart_config_t &config;){
-     UART_GetDefaultConfig(&config); // Se configura UART por defecto
+void uart_iniciar( UART_flow *ser_com){
+	uart_config_t config = ser_com->config;
+    UART_GetDefaultConfig(&config); // Se configura UART por defecto
     // Se aplican configuraciones del requerimiento
     config.baudRate_Bps = 2400; 
     config.enableTx = true; 
@@ -29,4 +32,3 @@ void uart_start(UART_flow *ser_com){
         UART1->D = XOFF;
     }
 }
-
