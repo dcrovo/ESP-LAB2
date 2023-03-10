@@ -32,6 +32,8 @@
  * @file    ESP-LAB2.c
  * @brief   Application entry point.
  */
+
+/* TODO: insert other include files here. */
 #include <stdio.h>
 #include "board.h"
 #include "peripherals.h"
@@ -42,35 +44,43 @@
 #include "queue.h"
 #include <limits.h>
 #include <stdlib.h>
-#include "Display.h"
-/* TODO: insert other include files here. */
-
 /* TODO: insert other definitions and declarations here. */
+#define Idle     0
+#define Activo   1
+#define Inactivo 2
 
+queue buffer;
+UART_flow uart_config;
+char State = Idle;
 /*
  * @brief   Application entry point.
  */
 
 
 int main(void) {
-   //#UART_flow uart_config;
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
-    initDisplay();
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
-
 #endif
-//uart_iniciar(&uart_config);
-
-
-
-
+    uart_iniciar(&uart_config);
     /*Loop de pooling*/
     while(1){
-
+        swtich(State){
+            case Idle:
+                 if ((UART0_S1 & (1 << UART0_S1_RDRF_SHIFT))){
+                    State = Activo;
+                 }
+            break;
+            case Activo:
+                
+            break;
+            case Inactivo:
+                // Display OFF por 2 segundos
+            break;
+        }
     }
 }
