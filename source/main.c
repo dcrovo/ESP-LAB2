@@ -42,6 +42,7 @@
 #include "queue.h"
 #include <limits.h>
 #include <stdlib.h>
+#include "Display.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -52,17 +53,22 @@
 
 
 int main(void) {
-    UART_flow uart_config;
+   //#UART_flow uart_config;
     /* Init board hardware. */
     BOARD_InitBootPins();
     BOARD_InitBootClocks();
     BOARD_InitBootPeripherals();
+    initDisplay();
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
+
 #endif
-    uart_iniciar(&uart_config);
-    
+//uart_iniciar(&uart_config);
+
+
+
+
     /*Loop de pooling*/
     while(1){
 

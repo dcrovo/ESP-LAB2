@@ -2,6 +2,7 @@
 #if !defined (DISPLAY_H)
 #define DIPLAY_H
 
+#include "MKL46Z4.h"
 /*Pin board definition for sseg*/
 
 #define SSA_PIN 6U
@@ -13,7 +14,8 @@
 #define SSG_PIN 31U
 #define SSP_PIN 2U
 
-
-void charToSSeg(char input);
-
+void initDisplay();
+void display(char input);
+void displayOff();
+#define GET_LSB(number, k, p) (((1 << k) - 1) & (number >> (p - 1)))
 #endif

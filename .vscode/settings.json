@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "time.h": "c",
-        "clock_config.h": "c"
+        "clock_config.h": "c",
+        "display.h": "c"
     }
 }
