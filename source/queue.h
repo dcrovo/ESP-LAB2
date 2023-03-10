@@ -4,7 +4,7 @@
 
 
 typedef struct node{ //Estructura de unitaria de la cola
-	char value; // Valor almacenado en la posición de la cola
+	uint8_t value; // Valor almacenado en la posición de la cola
 	struct node *next; //Dirección del siguiente valor de la cola
 }node;
 
@@ -12,18 +12,20 @@ typedef struct{
 	node *head; // primer valor de la cola para extraer
 	node *tail; // ultimo valor recibido por la cola
 	int q_tam; // tamaño actual de la cola
+	int32_t size;
 }queue;
 
 //Inicializacion de la cola
-void queue_init(queue *q){
+void queue_init(queue *q, int32_t Buff_size){
 
 	q->head = NULL; 
 	q->tail = NULL;
 	q->q_tam=0;
+	q->size = size;
 }
 
 /*Funcion para agregar un dato a la cola*/
-char queue_in(queue *q, char value){
+char queue_in(queue *q, uint8_t value){
 	//Se crea un nuevo nodo
 	node *newnode = malloc(sizeof(node));
 	if(newnode == NULL) return FALSE;
@@ -44,7 +46,7 @@ char queue_in(queue *q, char value){
 	return TRUE;
 }
 
-char queue_out(queue *q){
+uint8_t queue_out(queue *q){
 
 	/*Si la cabeza está vacia no hay datos en la cola*/
 	if(q->head == NULL) return QUEUE_EMPTY;
@@ -53,7 +55,7 @@ char queue_out(queue *q){
 	node *tmp = q->head;
 
 	//Se guarda el valor que se va a retornar
-	char result = tmp->value;
+	uint8_t result = tmp->value;
 
 	//Se elimina el valor que se saco y se asigna la cabeza al siguiente valor
 	q->head = q->head->next;
@@ -66,4 +68,22 @@ char queue_out(queue *q){
 	q->q_tam--;//Se disminuye en 1 el tamaño de la cola
 	return result;
 
+}
+
+char queue_full(queue *q){
+	if(q->q_tam >= ((q->size) * 0.75)){
+		return TRUE;
+	}
+	else{
+		return FALSE;
+	}
+}
+
+char queue_empty(queue *q){
+	if(q->q_tam == ((q->size) * 0.25)){
+		return TRUE;
+	}
+	else{
+		return FALSE;
+	}
 }

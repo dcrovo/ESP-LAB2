@@ -62,7 +62,7 @@ int main(void) {
     BOARD_InitDebugConsole();
 #endif
     uart_iniciar(&uart_config);
-    
+    uart_start(&uart_config);
     /*Loop de pooling*/
     while(1){
 
