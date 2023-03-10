@@ -1,5 +1,5 @@
+#include <queue.h>
 #include "UART.h"
-#include "queue.h"
 #include "Utilities.h"
 
 extern queue *buffer;
@@ -40,11 +40,11 @@ void uart_start(UART_flow *ser_com){
 
 char receive_data(UART_flow *ser_com){
 
-    if ((UART0_S1 & (1 << UART0_S1_RDRF_SHIFT))) {
+    if (kUART_RxActiveFlag) {
         //Tm_Inicie_timeout();
 		if (!queue_full(&buffer)) {
 			ser_com->flowctr = TRUE;
-            queue_in(&buffer, UART0_D);
+            queue_in(&buffer, UART0);
 		} else {
 			ser_com->flowctr = FALSE;
             uart_stop(&ser_com);

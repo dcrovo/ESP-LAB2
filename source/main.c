@@ -41,9 +41,11 @@
 #include "clock_config.h"
 #include "MKL46Z4.h"
 #include "fsl_debug_console.h"
-#include "queue.h"
 #include <limits.h>
+#include <queue.h>
 #include <stdlib.h>
+
+#include "UART.h"
 /* TODO: insert other definitions and declarations here. */
 #define Idle     0
 #define Activo   1
@@ -69,9 +71,9 @@ int main(void) {
     uart_iniciar(&uart_config);
     /*Loop de pooling*/
     while(1){
-        swtich(State){
+        switch(State){
             case Idle:
-                 if ((UART0_S1 & (1 << UART0_S1_RDRF_SHIFT))){
+                 if (kUART_RxActiveFlag){
                     State = Activo;
                  }
             break;
