@@ -31,3 +31,5 @@ void uart_stop(UART_flow *ser_com);
 
 //Reanuda la comunicación serial
 void uart_start(UART_flow *ser_com);
+
+char receive_data(UART_flow *ser_com);
