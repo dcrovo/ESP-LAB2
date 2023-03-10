@@ -7,6 +7,7 @@
 
 /* Tipo de dato para los contadores */
 typedef unsigned int Tm_Contador;
+
 #define TM_PER_F_ACTIVO    0x01		/* El per�odo est� activo */
 #define TM_PER_F_FC        0x02		/* Hubo fin de conteo en el per�odo */
 /* Estructura para definir e impplementar un per�odo */
