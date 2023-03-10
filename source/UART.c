@@ -15,6 +15,7 @@ void uart_iniciar( UART_flow *ser_com){
     config.enableRx = true; 
     config.parityMode = kUART_ParityDisabled; 
     config.stopBitCount = kUART_OneStopBit;
+    ser_com->flowctr = TRUE;
     //Se inicializa el UART con la configuración deseada
     UART_Init(UART0, &config, CLOCK_GetFreq(kCLOCK_CoreSysClk));
     UART_EnableTx(UART0, true); // Enable UART transmitter
@@ -31,17 +32,19 @@ void uart_stop(UART_flow *ser_com){
 
 //Reanuda la comunicación serial
 void uart_start(UART_flow *ser_com){
-    if((ser_com->flowctr)){
+    if((ser_com->flowctr & queue_empty(&buffer))){
         UART_EnableTx(UART0, true); // Enable UART transmitter
         UART0->D = XON;
     }
 }
 
 char receive_data(UART_flow *ser_com){
+
     if ((UART0_S1 & (1 << UART0_S1_RDRF_SHIFT))) {
-		queue_in(&buffer, UART0_D);
+        //Tm_Inicie_timeout();
 		if (!queue_full(&buffer)) {
 			ser_com->flowctr = TRUE;
+            queue_in(&buffer, UART0_D);
 		} else {
 			ser_com->flowctr = FALSE;
             uart_stop(&ser_com);

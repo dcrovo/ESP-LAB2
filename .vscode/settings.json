@@ -2,6 +2,10 @@
     "files.associations": {
         "time.h": "c",
         "clock_config.h": "c",
+<<<<<<< Updated upstream
         "display.h": "c"
+=======
+        "board.h": "c"
+>>>>>>> Stashed changes
     }
 }
