@@ -42,7 +42,7 @@ char receive_data(UART_flow *ser_com){
 
     if (kUART_RxActiveFlag) {
         //Tm_Inicie_timeout();
-		if (!queue_full(&buffer) & !((kUART_RxDataRegFullFlag | kUART_RxOverrunFlag) & UART_GetStatusFlags(UART1_PERIPHERAL))) {
+		if (!queue_full(&buffer)) {
 			ser_com->flowctr = TRUE;
             queue_in(&buffer, UART1->D);
 		} else {
