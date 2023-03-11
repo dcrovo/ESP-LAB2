@@ -25,6 +25,26 @@ extern "C" {
  */
 void BOARD_InitBootPins(void);
 
+#define SOPT5_UART1RXSRC_UART_RX 0x00u /*!<@brief UART1 Receive Data Source Select: UART1_RX pin */
+
+/*! @name PORTE0 (number 1), J2[18]/D14
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_UART1Tx_PORT PORTE               /*!<@brief PORT peripheral base pointer */
+#define BOARD_UART1Tx_PIN 0U                   /*!<@brief PORT pin number */
+#define BOARD_UART1Tx_PIN_MASK (1U << 0U)      /*!<@brief PORT pin mask */
+                                               /* @} */
+
+/*! @name PORTE1 (number 2), J2[20]/D15
+  @{ */
+
+/* Symbols to be used with PORT driver */
+#define BOARD_UART1Rx_PORT PORTE               /*!<@brief PORT peripheral base pointer */
+#define BOARD_UART1Rx_PIN 1U                   /*!<@brief PORT pin number */
+#define BOARD_UART1Rx_PIN_MASK (1U << 1U)      /*!<@brief PORT pin mask */
+                                               /* @} */
+
 /*!
  * @brief Configures pin routing and optionally pin electrical features.
  *

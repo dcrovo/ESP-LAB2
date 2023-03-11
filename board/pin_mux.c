@@ -28,8 +28,8 @@ pin_labels:
 - {pin_num: '99', pin_signal: LCD_P46/ADC0_SE7b/PTD6/LLWU_P15/SPI1_MOSI/UART0_RX/SPI1_MISO/LCD_P46_Fault, label: 'J2[8]/D11'}
 - {pin_num: '100', pin_signal: LCD_P47/PTD7/SPI1_MISO/UART0_TX/SPI1_MOSI/LCD_P47_Fault, label: 'J2[10]/D12'}
 - {pin_num: '98', pin_signal: LCD_P45/ADC0_SE6b/PTD5/SPI1_SCK/UART2_TX/TPM0_CH5/LCD_P45_Fault, label: 'J2[12]/D13/LED_GREEN', identifier: LED_GREEN}
-- {pin_num: '1', pin_signal: LCD_P48/PTE0/SPI1_MISO/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA/LCD_P48_Fault, label: 'J2[18]/D14'}
-- {pin_num: '2', pin_signal: LCD_P49/PTE1/SPI1_MOSI/UART1_RX/SPI1_MISO/I2C1_SCL/LCD_P49_Fault, label: 'J2[20]/D15'}
+- {pin_num: '1', pin_signal: LCD_P48/PTE0/SPI1_MISO/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA/LCD_P48_Fault, label: 'J2[18]/D14', identifier: UART1Tx}
+- {pin_num: '2', pin_signal: LCD_P49/PTE1/SPI1_MOSI/UART1_RX/SPI1_MISO/I2C1_SCL/LCD_P49_Fault, label: 'J2[20]/D15', identifier: UART1Rx}
 - {pin_num: '59', pin_signal: LCD_P9/PTB9/SPI1_SCK/LCD_P9_Fault, label: 'J2[17]'}
 - {pin_num: '47', pin_signal: PTA17/SPI0_MISO/SPI0_MOSI/I2S0_MCLK, label: 'J2[15]'}
 - {pin_num: '46', pin_signal: PTA16/SPI0_MOSI/SPI0_MISO/I2S0_RX_FS/I2S0_RXD0, label: 'J2[13]'}
@@ -140,7 +140,9 @@ void BOARD_InitBootPins(void)
  * TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 BOARD_InitPins:
 - options: {callFromInitBoot: 'true', prefix: BOARD_, coreID: core0, enableClock: 'true'}
-- pin_list: []
+- pin_list:
+  - {pin_num: '1', peripheral: SIM, signal: UART1_MOD_OUT, pin_signal: LCD_P48/PTE0/SPI1_MISO/UART1_TX/RTC_CLKOUT/CMP0_OUT/I2C1_SDA/LCD_P48_Fault}
+  - {pin_num: '2', peripheral: UART1, signal: RX, pin_signal: LCD_P49/PTE1/SPI1_MOSI/UART1_RX/SPI1_MISO/I2C1_SCL/LCD_P49_Fault}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -153,6 +155,21 @@ BOARD_InitPins:
  * END ****************************************************************************************************************/
 void BOARD_InitPins(void)
 {
+    /* Port E Clock Gate Control: Clock enabled */
+    CLOCK_EnableClock(kCLOCK_PortE);
+
+    /* PORTE0 (pin 1) is configured as UART1_TX */
+    PORT_SetPinMux(BOARD_UART1Tx_PORT, BOARD_UART1Tx_PIN, kPORT_MuxAlt3);
+
+    /* PORTE1 (pin 2) is configured as UART1_RX */
+    PORT_SetPinMux(BOARD_UART1Rx_PORT, BOARD_UART1Rx_PIN, kPORT_MuxAlt3);
+
+    SIM->SOPT5 = ((SIM->SOPT5 &
+                   /* Mask bits to zero which are setting */
+                   (~(SIM_SOPT5_UART1RXSRC_MASK)))
+
+                  /* UART1 Receive Data Source Select: UART1_RX pin. */
+                  | SIM_SOPT5_UART1RXSRC(SOPT5_UART1RXSRC_UART_RX));
 }
 
 /* clang-format off */

@@ -34,7 +34,7 @@ char queue_in(queue *q, uint8_t value){
 	return TRUE;
 }
 
-uint8_t queue_out(queue *q){
+char queue_out(queue *q){
 
 	/*Si la cabeza está vacia no hay datos en la cola*/
 	if(q->head == NULL) return QUEUE_EMPTY;
@@ -43,7 +43,7 @@ uint8_t queue_out(queue *q){
 	node *tmp = q->head;
 
 	//Se guarda el valor que se va a retornar
-	uint8_t result = tmp->value;
+	char result = tmp->value;
 
 	//Se elimina el valor que se saco y se asigna la cabeza al siguiente valor
 	q->head = q->head->next;

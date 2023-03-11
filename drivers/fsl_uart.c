@@ -362,7 +362,7 @@ void UART_GetDefaultConfig(uart_config_t *config)
 {
     assert(config);
 
-    config->baudRate_Bps = 115200U;
+    config->baudRate_Bps = 2400U;
     config->parityMode = kUART_ParityDisabled;
 #if defined(FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT) && FSL_FEATURE_UART_HAS_STOP_BIT_CONFIG_SUPPORT
     config->stopBitCount = kUART_OneStopBit;

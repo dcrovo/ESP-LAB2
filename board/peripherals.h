@@ -10,6 +10,8 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
+#include "fsl_uart.h"
+#include "fsl_clock.h"
 #include "fsl_gpio.h"
 #include "fsl_port.h"
 #include "fsl_i2c.h"
@@ -21,6 +23,12 @@ extern "C" {
 /***********************************************************************************************************************
  * Definitions
  **********************************************************************************************************************/
+/* Definitions for BOARD_InitPeripherals functional group */
+/* Definition of peripheral ID */
+#define UART1_PERIPHERAL UART1
+/* Definition of the clock source frequency */
+#define UART1_CLOCK_SOURCE CLOCK_GetFreq(UART1_CLK_SRC)
+
 /* Definitions for BOARD_InitButtonsPeripheral functional group */
 /* Alias for GPIOC peripheral */
 #define BOARD_SW1_SW3_GPIO GPIOC
@@ -58,6 +66,7 @@ extern "C" {
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
+extern const uart_config_t UART1_config;
 extern const i2c_master_config_t BOARD_ACCEL_I2C_config;
 extern const i2c_master_config_t MAG_I2C_config;
 

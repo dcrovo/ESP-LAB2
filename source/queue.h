@@ -27,7 +27,7 @@ void queue_init(queue *q, int32_t Buff_size);
 /*Funcion para agregar un dato a la cola*/
 char queue_in(queue *q, uint8_t value);
 
-uint8_t queue_out(queue *q);
+char queue_out(queue *q);
 
 char queue_full(queue *q);
 
