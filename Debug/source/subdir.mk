@@ -9,6 +9,7 @@ C_SRCS += \
 ../source/UART.c \
 ../source/main.c \
 ../source/mtb.c \
+../source/queue.c \
 ../source/semihost_hardfault.c 
 
 C_DEPS += \
@@ -17,6 +18,7 @@ C_DEPS += \
 ./source/UART.d \
 ./source/main.d \
 ./source/mtb.d \
+./source/queue.d \
 ./source/semihost_hardfault.d 
 
 OBJS += \
@@ -25,6 +27,7 @@ OBJS += \
 ./source/UART.o \
 ./source/main.o \
 ./source/mtb.o \
+./source/queue.o \
 ./source/semihost_hardfault.o 
 
 
@@ -40,7 +43,7 @@ source/%.o: ../source/%.c source/subdir.mk
 clean: clean-source
 
 clean-source:
-	-$(RM) ./source/Display.d ./source/Display.o ./source/Time.d ./source/Time.o ./source/UART.d ./source/UART.o ./source/main.d ./source/main.o ./source/mtb.d ./source/mtb.o ./source/semihost_hardfault.d ./source/semihost_hardfault.o
+	-$(RM) ./source/Display.d ./source/Display.o ./source/Time.d ./source/Time.o ./source/UART.d ./source/UART.o ./source/main.d ./source/main.o ./source/mtb.d ./source/mtb.o ./source/queue.d ./source/queue.o ./source/semihost_hardfault.d ./source/semihost_hardfault.o
 
 .PHONY: clean-source
 

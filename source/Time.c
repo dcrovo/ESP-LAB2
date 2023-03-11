@@ -9,7 +9,7 @@ char Tm_Inicie (Tm_Control *tcp,
                 Tm_Timeout *tp, 
                 Tm_Num nto,
                 Tm_Atender *atender)
-   {
+{
    /* Tabla de per�odos */
    tcp->pp = pp;
    tcp->nper = nper;
@@ -29,11 +29,11 @@ char Tm_Inicie (Tm_Control *tcp,
    tcp->atender = atender;
    
    return TRUE;
-   };
+}
                 
 /* Rutina para procesar el m�dulo (dentro del loop de polling) */				
 void Tm_Procese (Tm_Control *tcp)
-   {
+{
    Tm_Num n;
    Tm_Periodo *pp;
    Tm_Timeout *tp;
@@ -55,14 +55,14 @@ void Tm_Procese (Tm_Control *tcp)
    for (n = tcp->nto, tp = tcp->tp; n; ++tp, --n)
       if (*tp)
          --(*tp);
-   };
+}
 
 /* ===== RUTINAS DE INTERFAZ ====== */
 /* Configurar un per�odo para que empiece a funcionar */
 char Tm_Inicie_periodo (Tm_Control *tcp, 
                         Tm_Num num_periodo,
                         Tm_Contador periodo)
-   {
+{
    Tm_Periodo *pp = tcp->pp + num_periodo;
    
    if (num_periodo >= tcp->nper)
@@ -72,7 +72,7 @@ char Tm_Inicie_periodo (Tm_Control *tcp,
    pp->contador = pp->periodo = periodo;
    
    return TRUE;
-   };
+}
 
 /* Desactivar un per�odo para que deje de funcionar */
 void Tm_Termine_periodo (Tm_Control *tcp, Tm_Num num_periodo){
@@ -88,11 +88,7 @@ char Tm_Hubo_periodo (Tm_Control *tcp, Tm_Num num_periodo){
    /*Se define un apuntador hacia la dirección del periodo*/
    Tm_Periodo *pp = tcp->pp + num_periodo;
    /*TRUE la bandera esta activa retorna que hibo fin*/
-   if(pp->banderas &= TM_PER_F_FC)
-      return TRUE;
-   else
-      return FALSE;
-
+   return(pp->banderas & TM_PER_F_FC);
 
 }
 
@@ -142,3 +138,35 @@ char Tm_Hubo_timeout (Tm_Control *tcp, Tm_Num num_timeout){
 }
 
 /* == FIN DE RUTINAS DE INTERFAZ == */
+
+
+/*----------------HW Specific Methods------------*/
+void initPit(uint32_t ldval, uint32_t channel_pit)
+{
+   SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
+   //Enable module, freeze timers in debug mode
+   PIT->MCR &= ~PIT_MCR_FRZ_MASK; // Enable freeze timer in debug mode
+   PIT->MCR &= ~PIT_MCR_MDIS_MASK; //Enable module
+   
+   PIT->CHANNEL[channel_pit].LDVAL = ldval;
+   PIT->CHANNEL[channel_pit].TCTRL &= ~PIT_TCTRL_TIE_MASK;
+   PIT->CHANNEL[channel_pit].TCTRL &= ~PIT_TCTRL_CHN_MASK;
+   PIT->CHANNEL[channel_pit].TCTRL |= PIT_TCTRL_TEN_MASK;
+   PIT->CHANNEL[channel_pit].TFLG |= PIT_TFLG_TIF_MASK;
+}
+void clearFlag(uint32_t channel_pit)
+{
+   PIT->CHANNEL[channel_pit].TFLG &= ~PIT_TFLG_TIF_MASK;
+  
+}
+char getFlag(uint32_t channel_pit)
+{
+   if (PIT->CHANNEL[channel_pit].TFLG & PIT_TFLG_TIF_MASK)
+   {
+      clearFlag(channel_pit);
+      return TRUE;
+   }else{
+      return FALSE;
+   }
+}
+/*-----------------------------------------------*/

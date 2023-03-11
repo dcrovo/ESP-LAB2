@@ -4,6 +4,8 @@
 #define TIME_H
 
 #include <Utilities.h>
+#include "MKL46Z4.h"
+
 
 /* Tipo de dato para los contadores */
 typedef unsigned int Tm_Contador;
@@ -75,5 +77,12 @@ void Tm_Termine_timeout (Tm_Control *tcp, Tm_Num num_timeout);
 char Tm_Hubo_timeout (Tm_Control *tcp, Tm_Num num_timeout);
 
 /* == FIN DE RUTINAS DE INTERFAZ == */
+
+
+/*----------------HW Specific Methods------------*/
+void initPit(uint32_t ldval, uint32_t channel_pit);
+void clearFlag(uint32_t channel_pit);
+char getFlag(uint32_t channel_pit);
+/*-----------------------------------------------*/
 
 #endif
