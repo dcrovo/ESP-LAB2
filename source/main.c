@@ -55,12 +55,16 @@
 #define PER_INT  1
 #define NORMAL_MODE 0
 #define NEG_MODE 1
+
 #define N_PER 2
 #define N_TO 3
+#define N_TO_2S 0
+#define N_TO_5S 1
+
 
 queue buffer;
 UART_flow uart_config;
-
+char COMP_FLAG = 0;
 char State = IDLE;
 char ch = '$';
 char tr_state = NORMAL_MODE;
@@ -121,7 +125,7 @@ int main(void) {
         {
             Tm_Procese(&c_tiempo);
         }
-        receive_data(UART_flow &uart_config);
+        receive_data(&uart_config);
        	//------------
 		//uart_receive_byte();
 		//------------
@@ -141,38 +145,42 @@ int main(void) {
                 switch (ch) {
 				case 38: //&
 					tr_state = NEG_MODE;
+                    COMP_FLAG = TRUE;
                     if(buffer.q_tam){
                     ch = queue_out(&buffer);
                     } 
 				break;
 				case 37: //%
-                    if(buffer.q_tam){
-                        ch = queue_out(&buffer);
-                    } 
-					/*uart_send_byte(XOFF); // XOFF
-					//iniciar time out
-					Tm_Inicie_timeout(&c_tiempo, N_TO_DISPLAY_OFF, 1600); //2 SEG
-					//TRX XOFF
-					dis_state = D_OFF_MODE;*/
-                    
+                    State = INACTIVO;
+                    Tm_Inicie_timeout(&c_tiempo, N_TO_2S,16000);
+					                 
 					break;
 				case 36: //$ //NORMAL
 					tr_state = NORMAL_MODE;
+                    COMP_FLAG = FALSE;
                     if(buffer.q_tam){
                         ch = queue_out(&buffer);
                     } 
 					break;
 				case 35: //#
-                    if(buffer.q_tam){
-                        ch = queue_out(&buffer);
-                    } 
-					//Cambiar PWM
-					/*Tm_Inicie_timeout(&c_tiempo, N_TO_ACT_LOW_INTENSITY, 1); //5 SEG
-					//iniciar time out
-					Tm_Inicie_timeout(&c_tiempo, N_TO_LOW_INTENSITY, 4000); //5 SEG*/
+                    
+					if(Tm_Hubo_periodo(&c_tiempo, PER_INT)){
+                        if(!c){
+                            display(ch);
+                        }else{
+                            displayOff();
+                        }
+                    }
+                    c>=4 ? c=0:c++;
+                    Tm_Baje_periodo(&c_tiempo,PER_INT);
+
+    }
 					break;
                 default:
-                    tr_state = NORMAL_MODE;
+                    if(!COMP_FLAG){
+                        tr_state = NORMAL_MODE;
+                    }
+                break;
                     
 				}  
                 switch (tr_state) {
@@ -183,67 +191,18 @@ int main(void) {
 					display(15 - GET_LSB(ch, 4, 1)); 
 					break;
 				} 
+                Tm_Baje_periodo(&c_tiempo, PER_625);
             }
-            Tm_Baje_periodo(&c_tiempo, PER_625);
-            /*if (Tm_Hubo_periodo(&c_tiempo, N_PER_NORMAL)) { // 160Hz
-
-				//-------------------------------------------------- OBTENER DATO DE BUFFER
-				if (ringBuffer_getCount(pRingBufferRx) != 0) {
-
-					ringBuffer_getData(pRingBufferRx, &ch);
-					
-					 uart_send_string("C=");
-					 uart_send_byte(ch);
-					 myprintf(" CO=%d\r\n", ringBuffer_getCount(pRingBufferRx));
-					 
-					if (ringBuffer_isFull(pRingBufferRx)) {
-						uart_send_byte(XOFF); // XOFF
-						flag_xoff = SI;
-					}
-				}
-
-				if (flag_xoff && ringBuffer_getCount(pRingBufferRx) == 0) {
-
-					//-------------------------------- imprimir ultimo dato
-
-					//ringBuffer_getData(pRingBufferRx, &ch);
-					ringBuffer_getData(pRingBufferRx, &ch);
-					/*uart_send_string("C=");
-					 uart_send_byte(ch);
-					 myprintf(" CO=%d\r\n", ringBuffer_getCount(pRingBufferRx));
-					 
-					//--------------------------------
-					uart_send_byte(XON); //0x11 XON || 0x17 XON REALTERM
-					flag_xoff = NO;
-				}*/
-				//--------------------------------------------------------------------------
-
-				//------------------------ ESTADOS
-				//------------------------
-				//if(ch == 35 ){
-				//	myprintf("P %d",ch);
-				//}
-				//&& ch != 35
-				/*if (!flag_timeout_2 && ch != 38 && ch != 36 && ch != 35
-						&& ch != 37 && ch != 13) {
-					lcdScan(rxvalueMNS);
-				}
-
-				Tm_Baje_periodo(&c_tiempo, N_PER_NORMAL);*/
-			}
-		break;
-
+        break;
 		case INACTIVO:
-			/*lcdOff();
-			if (flag_timeout_0
-					!= Tm_Hubo_timeout(&c_tiempo, N_TO_DISPLAY_OFF)) {
-				//uart_send_string("CH EST\r\n");
-				//cambia estado
-				dis_state = D_NORMAL;
-				//TRX XON
-				uart_send_byte(XON); // XOFF
-			}
-			flag_timeout_0 = Tm_Hubo_timeout(&c_tiempo, N_TO_DISPLAY_OFF);*/
+            displayOff();
+            if(Tm_Hubo_timeout(&c_tiempo, N_TO_2S)){
+                State = ACTIVO;
+                if(buffer.q_tam){
+                    ch = queue_out(&buffer);
+                }
+        
+            }
 		break;
 		}
         if(!(uart_config.flowctr) & queue_empty(&buffer)){
