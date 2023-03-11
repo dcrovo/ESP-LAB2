@@ -95,12 +95,14 @@ void BOARD_InitBootClocks(void)
 name: BOARD_BootClockRUN
 called_from_default_init: true
 outputs:
-- {id: Bus_clock.outFreq, value: 10.48576 MHz}
-- {id: Core_clock.outFreq, value: 20.97152 MHz}
-- {id: Flash_clock.outFreq, value: 10.48576 MHz}
+- {id: Bus_clock.outFreq, value: 23.986176 MHz}
+- {id: Core_clock.outFreq, value: 48 MHz, locked: true, accuracy: '0.001'}
+- {id: Flash_clock.outFreq, value: 23.986176 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
-- {id: PLLFLLCLK.outFreq, value: 20.97152 MHz}
-- {id: System_clock.outFreq, value: 20.97152 MHz}
+- {id: PLLFLLCLK.outFreq, value: 47.972352 MHz}
+- {id: System_clock.outFreq, value: 47.972352 MHz}
+settings:
+- {id: MCG.FLL_mul.scale, value: '1464'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -114,8 +116,8 @@ const mcg_config_t mcgConfig_BOARD_BootClockRUN =
         .ircs = kMCG_IrcSlow,                     /* Slow internal reference clock selected */
         .fcrdiv = 0x1U,                           /* Fast IRC divider: divided by 2 */
         .frdiv = 0x0U,                            /* FLL reference clock divider: divided by 1 */
-        .drs = kMCG_DrsLow,                       /* Low frequency range */
-        .dmx32 = kMCG_Dmx32Default,               /* DCO has a default range of 25% */
+        .drs = kMCG_DrsMid,                       /* Mid frequency range */
+        .dmx32 = kMCG_Dmx32Fine,                  /* DCO is fine-tuned for maximum frequency with 32.768 kHz reference */
         .pll0Config =
             {
                 .enableMode = MCG_PLL_DISABLE,    /* MCGPLLCLK disabled */

@@ -643,14 +643,16 @@
                </dependencies>
                <clock_sources/>
                <clock_outputs>
-                  <clock_output id="Bus_clock.outFreq" value="10.48576 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Core_clock.outFreq" value="20.97152 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Flash_clock.outFreq" value="10.48576 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Bus_clock.outFreq" value="23.986176 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Core_clock.outFreq" value="48 MHz" locked="true" accuracy="0.001"/>
+                  <clock_output id="Flash_clock.outFreq" value="23.986176 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
-                  <clock_output id="PLLFLLCLK.outFreq" value="20.97152 MHz" locked="false" accuracy=""/>
-                  <clock_output id="System_clock.outFreq" value="20.97152 MHz" locked="false" accuracy=""/>
+                  <clock_output id="PLLFLLCLK.outFreq" value="47.972352 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="47.972352 MHz" locked="false" accuracy=""/>
                </clock_outputs>
-               <clock_settings/>
+               <clock_settings>
+                  <setting id="MCG.FLL_mul.scale" value="1464" locked="false"/>
+               </clock_settings>
                <called_from_default_init>true</called_from_default_init>
             </clock_configuration>
             <clock_configuration name="BOARD_BootClockVLPR" id_prefix="" prefix_user_defined="false">

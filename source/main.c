@@ -44,16 +44,50 @@
 #include <limits.h>
 #include <queue.h>
 #include <stdlib.h>
+#include "Time.h"
+#include "Display.h"
 
 #include "UART.h"
-/* TODO: insert other definitions and declarations here. */
 #define Idle     0
 #define Activo   1
 #define Inactivo 2
 
+#define N_PER 2
+#define N_TO 3
+
 queue buffer;
 UART_flow uart_config;
+
 char State = Idle;
+static Tm_Periodo periodos[N_PER];
+static Tm_Timeout timeouts[N_TO];
+Tm_Control c_tiempo;
+static char atenderTimer(char atienda){
+	if(PIT->CHANNEL[0].TFLG & PIT_TFLG_TIF_MASK)
+	{
+		if(atienda)
+		{
+			PIT->CHANNEL[0].TFLG &= PIT_TFLG_TIF_MASK;
+		}
+		return TRUE;
+	}else{
+		return FALSE;
+	}
+};
+static void displayLowIntensity(){
+    if(Tm_Hubo_periodo(&c_tiempo, 1)){
+    	c>=4 ? c=0:c++;
+    	if(!c)
+    	{
+    		display(0);
+    	}else{
+    		displayOff();
+    	}
+        Tm_Baje_periodo(&c_tiempo,1);
+
+    }
+};
+
 /*
  * @brief   Application entry point.
  */
@@ -68,9 +102,20 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
-    uart_iniciar(&uart_config);
+    //uart_iniciar(&uart_config);
+    Tm_Inicie(&c_tiempo, periodos, N_PER, timeouts, N_TO, &atenderTimer);
+    Tm_Inicie_periodo(&c_tiempo, 0, 50); // periodo de 6.25ms
+    Tm_Inicie_periodo(&c_tiempo, 1, 5); // periodo de 625us
+
+    initDisplay();
+    initPit(0xBB7,0); //24000000*0.000125 - 1 ->125us
+    int c = 0;
     /*Loop de pooling*/
     while(1){
+        if(atenderTimer(FALSE))
+        {
+            Tm_Procese(&c_tiempo);
+        }
         switch(State){
             case Idle:
                  if (kUART_RxActiveFlag){
@@ -86,3 +131,5 @@ int main(void) {
         }
     }
 }
+
+
