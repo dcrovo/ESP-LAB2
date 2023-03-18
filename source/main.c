@@ -59,7 +59,7 @@
 #define PER_INT  1
 #define N_TO_2S 0
 #define N_TO_5S 1
-#define Q_SIZE 64
+#define Q_SIZE 256
 /*Defnicion de periodos y timeouts*/
 #define N_PER 2
 #define N_TO 3
@@ -78,8 +78,6 @@ int c = 0;
 
 char reception;
 bool checkear = TRUE, bandera_while = TRUE;
-static char colitas[60] = {0};
-static unsigned char i =0;
 char display_state = IDLE;
 char bits_Descarte;
 char flag_LI = FALSE;
@@ -118,11 +116,12 @@ int main(void) {
 /*					Modules initialization									*/
 /*--------------------------------------------------------------------------*/
     Tm_Inicie(&c_tiempo, periodos, N_PER, timeouts, N_TO, &atenderTimer);
-    Tm_Inicie_periodo(&c_tiempo, PER_625, 50); /* periodo de 6.25ms*/
+    Tm_Inicie_periodo(&c_tiempo, PER_625, 200); /* periodo de 6.25ms*/
     Tm_Inicie_periodo(&c_tiempo, PER_INT, 5); /* periodo de 625us*/
 	initDisplay();
     initPit(0xBB7,0); /*24000000*0.000125 - 1 ->125us*/
     initUart1();
+    startCommunication();
 	initQueue(&buffer, Q_SIZE);
 /*--------------------------------------------------------------------------*/	
     //PRINTF("Hola");
@@ -131,11 +130,8 @@ int main(void) {
 
 		if(atenderTimer(FALSE))
 			Tm_Procese(&c_tiempo);
-	    //PRINTF("Hola");
-		//displayLowIntensity(PER_INT, 2,  &c);
-		//display(2);
-		//reception =	receiveChar();
-		if(flag_XOFF){
+
+		if(!flag_XOFF){
 			enqueue(&buffer,receiveChar());
 		}
 		switch (display_state)
@@ -161,7 +157,7 @@ int main(void) {
 							tr_state = NEG_MODE;
 						break;
 						case 37:  //%
-							Tm_Inicie_timeout(&c_tiempo, N_TO_2S,1600);
+							Tm_Inicie_timeout(&c_tiempo, N_TO_2S,16000);
 							display_state = INACTIVO;
 						break;
 						case 36: // $
@@ -169,7 +165,7 @@ int main(void) {
 						break;
 						case 35: // #
 							flag_LI = TRUE;
-							Tm_Inicie_timeout(&c_tiempo, N_TO_5S,/*Tiempo de espera*/);
+							Tm_Inicie_timeout(&c_tiempo, N_TO_5S,40000);
 						break;
 					}
 					/*---Descarte de datos los bits màs significativos--*/
@@ -183,7 +179,7 @@ int main(void) {
 							bits_Descarte = ~GET_LSB(reception, 4, 1);
 						break;
 					}
-					if(reception != 38 & reception != 37 & reception != 36 & reception != 35 & display_state != INACTIVO){
+					if((reception != 38) & (reception != 37) & (reception != 36) & (reception != 35) & (display_state != INACTIVO)){
 						if(!flag_LI){
 							display(bits_Descarte);
 						}
@@ -204,6 +200,7 @@ int main(void) {
 				displayOff();
 				if(Tm_Hubo_timeout(&c_tiempo,N_TO_2S)){
 					display_state = ACTIVO;
+					Tm_Termine_timeout(&c_tiempo, N_TO_2S);
 				}
 			break;
 
