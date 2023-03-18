@@ -46,8 +46,8 @@
 #include <stdlib.h>
 #include "Time.h"
 #include "Display.h"
-
 #include "UART.h"
+
 #define IDLE     0
 #define ACTIVO   1
 #define INACTIVO 2
@@ -84,20 +84,7 @@ static char atenderTimer(char atienda){
 	}else{
 		return FALSE;
 	}
-};/*
-static void displayLowIntensity(){
-    if(Tm_Hubo_periodo(&c_tiempo, PER_INT)){
-    	c>=4 ? c=0:c++;
-    	if(!c)
-    	{
-    		display(0);
-    	}else{
-    		displayOff();
-    	}
-        Tm_Baje_periodo(&c_tiempo,1);
-
-    }
-};*/
+};
 
 /*
  * @brief   Application entry point.
@@ -106,7 +93,7 @@ static void displayLowIntensity(){
 
 int main(void) {
     /* Init board hardware. */
-
+	BOARD_InitPeripherals();
     BOARD_InitBootClocks();
     BOARD_BootClockRUN();
 
@@ -114,18 +101,26 @@ int main(void) {
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
-    //uart_iniciar(&uart_config);
+/*--------------------------------------------------------------------------*/
+/*					Modules initialization									*/
+/*--------------------------------------------------------------------------*/
     Tm_Inicie(&c_tiempo, periodos, N_PER, timeouts, N_TO, &atenderTimer);
     Tm_Inicie_periodo(&c_tiempo, PER_625, 50); /* periodo de 6.25ms*/
     Tm_Inicie_periodo(&c_tiempo, PER_INT, 5); /* periodo de 625us*/
 
     initDisplay();
-    initPit(0xBB7,0); //24000000*0.000125 - 1 ->125us*/
+    initPit(0xBB7,0); /*24000000*0.000125 - 1 ->125us*/
     initUart1();
+    PRINTF("Hola");
     /*Loop de pooling*/
     while(1){
 
+		if(atenderTimer(FALSE))
+			Tm_Procese(&c_tiempo);
+	    PRINTF("Hola");
 
+		displayLowIntensity(PER_INT, 2,  &c);
+		//display(2);
 
 
 
