@@ -3,6 +3,7 @@
 #define DIPLAY_H
 
 #include "MKL46Z4.h"
+#include "Time.h"
 /*Pin board definition for sseg*/
 
 #define SSA_PIN 6U
@@ -17,5 +18,7 @@
 void initDisplay();
 void display(char input);
 void displayOff();
+void displayLowIntensity(Tm_Num PER_INT, char data, int *c);
+
 #define GET_LSB(number, k, p) (((1 << k) - 1) & (number >> (p - 1)))
 #endif

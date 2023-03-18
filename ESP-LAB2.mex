@@ -649,9 +649,12 @@
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="PLLFLLCLK.outFreq" value="47.972352 MHz" locked="false" accuracy=""/>
                   <clock_output id="System_clock.outFreq" value="47.972352 MHz" locked="false" accuracy=""/>
+                  <clock_output id="UART0CLK.outFreq" value="47.972352 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
                   <setting id="MCG.FLL_mul.scale" value="1464" locked="false"/>
+                  <setting id="SIM.UART0SRCSEL.sel" value="SIM.PLLFLLSEL" locked="false"/>
+                  <setting id="UART0ClkConfig" value="yes" locked="false"/>
                </clock_settings>
                <called_from_default_init>true</called_from_default_init>
             </clock_configuration>
@@ -751,12 +754,42 @@
             <functional_group name="BOARD_InitPeripherals" uuid="1bb6974a-4bc4-479b-a0a6-8d49a249c886" called_from_default_init="true" id_prefix="" core="core0">
                <description></description>
                <options/>
-               <dependencies/>
+               <dependencies>
+                  <dependency resourceType="ClockOutput" resourceId="UART0CLK" description="UART0 clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data type="Frequency" unit="Hz">0</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="UART0.uart_tx" description="Signal TX is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="UART0.uart_rx" description="Signal RX is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
                <instances>
                   <instance name="NVIC" uuid="e3ad4604-681f-4521-83f3-996ee2c363a8" type="nvic" type_id="nvic_57b5eef3774cc60acaede6f5b8bddc67" mode="general" peripheral="NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="nvic">
                         <array name="interrupt_table"/>
                         <array name="interrupts"/>
+                     </config_set>
+                  </instance>
+                  <instance name="UART0" uuid="b66c61fb-b372-4f23-ba48-30fc16306125" type="lpsci" type_id="lpsci_d7d643c7d665ff9a7a181303138bb697" mode="polling" peripheral="UART0" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="lpsciConfig_t" quick_selection="QuickSelection1">
+                        <struct name="lpsciConfig">
+                           <setting name="clockSource" value="UartClock"/>
+                           <setting name="lpsciSrcClkFreq" value="ClocksTool_DefaultInit"/>
+                           <setting name="baudRate_Bps" value="115200"/>
+                           <setting name="parityMode" value="kLPSCI_ParityDisabled"/>
+                           <setting name="stopBitCount" value="kLPSCI_OneStopBit"/>
+                           <setting name="idleLineType" value="kLPSCI_IdleLineStartBit"/>
+                           <setting name="enableTx" value="true"/>
+                           <setting name="enableRx" value="true"/>
+                        </struct>
                      </config_set>
                   </instance>
                </instances>

@@ -97,6 +97,46 @@ static void NVIC_init(void) {
 } */
 
 /***********************************************************************************************************************
+ * UART0 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'UART0'
+- type: 'lpsci'
+- mode: 'polling'
+- custom_name_enabled: 'false'
+- type_id: 'lpsci_d7d643c7d665ff9a7a181303138bb697'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'UART0'
+- config_sets:
+  - lpsciConfig_t:
+    - lpsciConfig:
+      - clockSource: 'UartClock'
+      - lpsciSrcClkFreq: 'ClocksTool_DefaultInit'
+      - baudRate_Bps: '115200'
+      - parityMode: 'kLPSCI_ParityDisabled'
+      - stopBitCount: 'kLPSCI_OneStopBit'
+      - idleLineType: 'kLPSCI_IdleLineStartBit'
+      - enableTx: 'true'
+      - enableRx: 'true'
+    - quick_selection: 'QuickSelection1'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const lpsci_config_t UART0_config = {
+  .baudRate_Bps = 115200UL,
+  .parityMode = kLPSCI_ParityDisabled,
+  .stopBitCount = kLPSCI_OneStopBit,
+  .idleLineType = kLPSCI_IdleLineStartBit,
+  .enableTx = true,
+  .enableRx = true
+};
+
+static void UART0_init(void) {
+  LPSCI_Init(UART0_PERIPHERAL, &UART0_config, UART0_CLOCK_SOURCE);
+}
+
+/***********************************************************************************************************************
  * BOARD_InitButtonsPeripheral functional group
  **********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -483,9 +523,17 @@ instance:
       - enableRx: 'false'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
+const lpsci_config_t BOARD_LPSCI_1_config = {
+  .baudRate_Bps = 115200UL,
+  .parityMode = kLPSCI_ParityDisabled,
+  .stopBitCount = kLPSCI_OneStopBit,
+  .idleLineType = kLPSCI_IdleLineStartBit,
+  .enableTx = false,
+  .enableRx = false
+};
 
 static void BOARD_LPSCI_1_init(void) {
-  /* Configuration of the component LPSCI_1 of functional group BOARD_InitDEBUG_UARTPeripheral is not valid. */
+  LPSCI_Init(BOARD_LPSCI_1_PERIPHERAL, &BOARD_LPSCI_1_config, BOARD_LPSCI_1_CLOCK_SOURCE);
 }
 
 /***********************************************************************************************************************
@@ -518,6 +566,7 @@ static void BOARD_NVIC_4_init(void) {
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
+  UART0_init();
 }
 
 void BOARD_InitButtonsPeripheral(void)

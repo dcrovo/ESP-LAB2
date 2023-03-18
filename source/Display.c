@@ -1,4 +1,5 @@
 #include "Display.h"
+extern Tm_Control c_tiempo;
 
 
 
@@ -90,5 +91,20 @@ void displayOff(){
             | (1<<SSD_PIN) | (1<<SSE_PIN) | (1<<SSF_PIN)
             | (1<<SSG_PIN) | (1<<SSP_PIN));
 }
+
+
+void displayLowIntensity(Tm_Num PER_INT, char data, int *c){
+    if(Tm_Hubo_periodo(&c_tiempo, PER_INT)){
+    	(*c)>=4 ? (*c)=0:(*c)++;
+    	if(!(*c))
+    	{
+    		display(data);
+    	}else{
+    		displayOff();
+    	}
+        Tm_Baje_periodo(&c_tiempo,1);
+
+    }
+};
 
 

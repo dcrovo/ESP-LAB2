@@ -55,6 +55,7 @@ board: FRDM-KL46Z
 #define SIM_OSC32KSEL_LPO_CLK                             3U  /*!< OSC32KSEL select: LPO clock */
 #define SIM_OSC32KSEL_OSC32KCLK_CLK                       0U  /*!< OSC32KSEL select: OSC32KCLK clock */
 #define SIM_PLLFLLSEL_MCGFLLCLK_CLK                       0U  /*!< PLLFLL select: MCGFLLCLK clock */
+#define SIM_UART_CLK_SEL_PLLFLLSEL_CLK                    1U  /*!< UART clock select: PLLFLLSEL output clock */
 
 /*******************************************************************************
  * Variables
@@ -101,8 +102,11 @@ outputs:
 - {id: LPO_clock.outFreq, value: 1 kHz}
 - {id: PLLFLLCLK.outFreq, value: 47.972352 MHz}
 - {id: System_clock.outFreq, value: 47.972352 MHz}
+- {id: UART0CLK.outFreq, value: 47.972352 MHz}
 settings:
 - {id: MCG.FLL_mul.scale, value: '1464'}
+- {id: SIM.UART0SRCSEL.sel, value: SIM.PLLFLLSEL}
+- {id: UART0ClkConfig, value: 'yes'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 
@@ -166,6 +170,8 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetSimConfig(&simConfig_BOARD_BootClockRUN);
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
+    /* Set UART0 clock source. */
+    CLOCK_SetLpsci0Clock(SIM_UART_CLK_SEL_PLLFLLSEL_CLK);
 }
 
 /*******************************************************************************
