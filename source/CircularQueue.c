@@ -37,9 +37,13 @@ void enqueue(Queue *queue, char element)
 	queue->size = queue->size + 1;
 
 };
-char queueFull_75(Queue *queue)
+char queueFull_75(Queue *queue) //No esta definida en queue.h
 {
 	return((float)(queue->size)/(float)(queue->capacity) >= 0.75);
+};
+char queue_25(Queue *queue) 
+{
+	return((float)(queue->size)/(float)(queue->capacity) == 0.25);
 };
 void deleteQueue(Queue *queue)
 {

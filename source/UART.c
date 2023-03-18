@@ -56,3 +56,9 @@ char receiveChar ()
 	  while (!(UART1->S1 & 0x20));
 	  return (UART1->D);
 };
+void stopCommunication(){
+    sendChar(XOFF);
+};
+void startCommunication(){
+    sendChar(XON);
+};

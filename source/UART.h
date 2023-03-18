@@ -17,5 +17,7 @@ void initUart1();
 
 void sendChar    (char data);
 char receiveChar ();
+void stopCommunication();
+void startCommunication();
 
 #endif
