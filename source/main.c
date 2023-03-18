@@ -42,7 +42,7 @@
 #include "MKL46Z4.h"
 #include "fsl_debug_console.h"
 #include <limits.h>
-/*#include <queue.h>*/
+#include <CircularQueue.h>
 #include <stdlib.h>
 #include "Time.h"
 #include "Display.h"
@@ -62,7 +62,6 @@
 #define N_TO_5S 1
 
 
-queue buffer;
 /*UART_flow uart_config;*/
 char COMP_FLAG = 0;
 char State = IDLE;
@@ -111,16 +110,31 @@ int main(void) {
     initDisplay();
     initPit(0xBB7,0); /*24000000*0.000125 - 1 ->125us*/
     initUart1();
-    PRINTF("Hola");
     /*Loop de pooling*/
     while(1){
 
 		if(atenderTimer(FALSE))
 			Tm_Procese(&c_tiempo);
-	    PRINTF("Hola");
 
 		displayLowIntensity(PER_INT, 2,  &c);
 		//display(2);
+
+		Queue queue;
+		initQueue(&queue, 64);
+		enqueue(&queue,'1');
+		enqueue(&queue, '2');
+
+
+		enqueue(&queue, '3');
+
+		sendChar(dequeue(&queue));
+		sendChar(dequeue(&queue));
+		sendChar(dequeue(&queue));
+		sendChar(dequeue(&queue));
+		sendChar('\r');
+		sendChar('\n');
+
+		deleteQueue(&queue);
 
 
 

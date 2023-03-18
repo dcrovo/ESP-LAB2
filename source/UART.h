@@ -3,7 +3,7 @@
 
 
 #include "fsl_device_registers.h"
-#include "queue.h"
+#include "CircularQueue.h"
 #include "fsl_debug_console.h"
 #include "fsl_uart.h"
 #include "pin_mux.h"
