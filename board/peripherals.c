@@ -97,45 +97,6 @@ static void NVIC_init(void) {
 } */
 
 /***********************************************************************************************************************
- * UART1 initialization code
- **********************************************************************************************************************/
-/* clang-format off */
-/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
-instance:
-- name: 'UART1'
-- type: 'uart'
-- mode: 'polling'
-- custom_name_enabled: 'false'
-- type_id: 'uart_cd31a12aa8c79051fda42cc851a27c37'
-- functional_group: 'BOARD_InitPeripherals'
-- peripheral: 'UART1'
-- config_sets:
-  - uartConfig_t:
-    - uartConfig:
-      - clockSource: 'BusInterfaceClock'
-      - clockSourceFreq: 'GetFreq'
-      - baudRate_Bps: '2400'
-      - parityMode: 'kUART_ParityDisabled'
-      - stopBitCount: 'kUART_OneStopBit'
-      - idleType: 'kUART_IdleTypeStartBit'
-      - enableTx: 'true'
-      - enableRx: 'true'
- * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
-/* clang-format on */
-const uart_config_t UART1_config = {
-  .baudRate_Bps = 2400UL,
-  .parityMode = kUART_ParityDisabled,
-  .stopBitCount = kUART_OneStopBit,
-  .idleType = kUART_IdleTypeStartBit,
-  .enableTx = true,
-  .enableRx = true
-};
-
-static void UART1_init(void) {
-  UART_Init(UART1_PERIPHERAL, &UART1_config, UART1_CLOCK_SOURCE);
-}
-
-/***********************************************************************************************************************
  * BOARD_InitButtonsPeripheral functional group
  **********************************************************************************************************************/
 /***********************************************************************************************************************
@@ -557,7 +518,6 @@ static void BOARD_NVIC_4_init(void) {
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
-  UART1_init();
 }
 
 void BOARD_InitButtonsPeripheral(void)

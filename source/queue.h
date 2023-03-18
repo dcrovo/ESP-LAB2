@@ -8,7 +8,7 @@
 #define QUEUE_EMPTY NULL
 
 
-typedef struct node{ //Estructura de unitaria de la cola
+typedef struct { //Estructura de unitaria de la cola
 	uint8_t value; // Valor almacenado en la posición de la cola
 	struct node *next; //Dirección del siguiente valor de la cola
 }node;

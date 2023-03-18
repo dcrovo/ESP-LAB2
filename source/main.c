@@ -42,7 +42,7 @@
 #include "MKL46Z4.h"
 #include "fsl_debug_console.h"
 #include <limits.h>
-#include <queue.h>
+/*#include <queue.h>*/
 #include <stdlib.h>
 #include "Time.h"
 #include "Display.h"
@@ -63,7 +63,7 @@
 
 
 queue buffer;
-UART_flow uart_config;
+/*UART_flow uart_config;*/
 char COMP_FLAG = 0;
 char State = IDLE;
 char ch = '$';
@@ -71,6 +71,8 @@ char tr_state = NORMAL_MODE;
 static Tm_Periodo periodos[N_PER];
 static Tm_Timeout timeouts[N_TO];
 Tm_Control c_tiempo;
+int c = 0;
+
 static char atenderTimer(char atienda){
 	if(PIT->CHANNEL[0].TFLG & PIT_TFLG_TIF_MASK)
 	{
@@ -82,7 +84,7 @@ static char atenderTimer(char atienda){
 	}else{
 		return FALSE;
 	}
-};
+};/*
 static void displayLowIntensity(){
     if(Tm_Hubo_periodo(&c_tiempo, PER_INT)){
     	c>=4 ? c=0:c++;
@@ -95,7 +97,7 @@ static void displayLowIntensity(){
         Tm_Baje_periodo(&c_tiempo,1);
 
     }
-};
+};*/
 
 /*
  * @brief   Application entry point.
@@ -104,128 +106,28 @@ static void displayLowIntensity(){
 
 int main(void) {
     /* Init board hardware. */
-    BOARD_InitBootPins();
+
     BOARD_InitBootClocks();
-    BOARD_InitBootPeripherals();
+    BOARD_BootClockRUN();
+
 #ifndef BOARD_INIT_DEBUG_CONSOLE_PERIPHERAL
     /* Init FSL debug console. */
     BOARD_InitDebugConsole();
 #endif
     //uart_iniciar(&uart_config);
     Tm_Inicie(&c_tiempo, periodos, N_PER, timeouts, N_TO, &atenderTimer);
-    Tm_Inicie_periodo(&c_tiempo, PER_625, 50); // periodo de 6.25ms
-    Tm_Inicie_periodo(&c_tiempo, PER_INT, 5); // periodo de 625us
+    Tm_Inicie_periodo(&c_tiempo, PER_625, 50); /* periodo de 6.25ms*/
+    Tm_Inicie_periodo(&c_tiempo, PER_INT, 5); /* periodo de 625us*/
 
     initDisplay();
-    initPit(0xBB7,0); //24000000*0.000125 - 1 ->125us
-    int c = 0;
+    initPit(0xBB7,0); //24000000*0.000125 - 1 ->125us*/
+    initUart1();
     /*Loop de pooling*/
     while(1){
-        if(atenderTimer(FALSE))
-        {
-            Tm_Procese(&c_tiempo);
-        }
-        receive_data(&uart_config);
-       	//------------
-		//uart_receive_byte();
-		//------------
-		switch (State) {
 
-		case IDLE:
-            if(buffer.q_tam){
-                State = ACTIVO;
-            }
-		break;
 
-		case ACTIVO:
-            if(Tm_Hubo_periodo(&c_tiempo, PER_625)){
-                if(buffer.q_tam){
-                    ch = queue_out(&buffer);
-                } 
-                switch (ch) {
-				case 38: //&
-					tr_state = NEG_MODE;
-                    COMP_FLAG = TRUE;
-                    if(buffer.q_tam){
-                    ch = queue_out(&buffer);
-                    } 
-				break;
-				case 37: //%
-                    State = INACTIVO;
-                    Tm_Inicie_timeout(&c_tiempo, N_TO_2S,16000);
-					                 
-					break;
-				case 36: //$ //NORMAL
-					tr_state = NORMAL_MODE;
-                    COMP_FLAG = FALSE;
-                    if(buffer.q_tam){
-                        ch = queue_out(&buffer);
-                    } 
-					break;
-				case 35: //#
-                    
-					if(Tm_Hubo_periodo(&c_tiempo, PER_INT)){
-                        if(!c){
-                            display(ch);
-                        }else{
-                            displayOff();
-                        }
-                    }
-                    c>=4 ? c=0:c++;
-                    Tm_Baje_periodo(&c_tiempo,PER_INT);
 
-    }
-					break;
-                default:
-                    if(!COMP_FLAG){
-                        tr_state = NORMAL_MODE;
-                    }
-                break;
-                    
-				}  
-                switch (tr_state) {
-				case NORMAL_MODE:
-                    display(GET_LSB(ch,4,1));
-					break;
-				case NEG_MODE:
-					display(15 - GET_LSB(ch, 4, 1)); 
-					break;
-				} 
-                Tm_Baje_periodo(&c_tiempo, PER_625);
-            }
-        break;
-		case INACTIVO:
-            displayOff();
-            if(Tm_Hubo_timeout(&c_tiempo, N_TO_2S)){
-                State = ACTIVO;
-                if(buffer.q_tam){
-                    ch = queue_out(&buffer);
-                }
-        
-            }
-		break;
-		}
-        if(!(uart_config.flowctr) & queue_empty(&buffer)){
-                uart_config.flowctr = TRUE;
-                uart_start(&uart_config);
-            }
 
-		/*if (flag_timeout_3
-				!= Tm_Hubo_timeout(&c_tiempo, N_TO_ACT_LOW_INTENSITY)) {
-			Tm_Inicie_pwm(&c_tiempo, N_PWM_PTE_31, 8, 1, COM_PIN); //200 Hz
-		}
-		flag_timeout_3 = Tm_Hubo_timeout(&c_tiempo, N_TO_ACT_LOW_INTENSITY);
-
-		if (flag_timeout_1 != Tm_Hubo_timeout(&c_tiempo, N_TO_LOW_INTENSITY)) {
-			Tm_Inicie_pwm(&c_tiempo, N_PWM_PTE_31, 4, 3, COM_PIN); //200 Hz
-		}
-		flag_timeout_1 = Tm_Hubo_timeout(&c_tiempo, N_TO_LOW_INTENSITY);
-
-		if (flag_timeout_2 != Tm_Hubo_timeout(&c_tiempo, N_TO_NEW_DATA)) {
-			uart_send_string("TO DISPLAY\r\n");
-			lcdScan('-');
-		}
-		flag_timeout_2 = Tm_Hubo_timeout(&c_tiempo, N_TO_NEW_DATA);*/
 
 	}
 	return 0;

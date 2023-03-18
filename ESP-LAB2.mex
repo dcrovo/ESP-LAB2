@@ -643,7 +643,7 @@
                </dependencies>
                <clock_sources/>
                <clock_outputs>
-                  <clock_output id="Bus_clock.outFreq" value="23.986176 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Bus_clock.outFreq" value="24 MHz" locked="true" accuracy="0.001"/>
                   <clock_output id="Core_clock.outFreq" value="48 MHz" locked="true" accuracy="0.001"/>
                   <clock_output id="Flash_clock.outFreq" value="23.986176 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
