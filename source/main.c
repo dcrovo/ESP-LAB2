@@ -67,7 +67,6 @@
 
 
 Queue buffer;
-char State = IDLE;
 char tr_state = NORMAL_MODE;
 static Tm_Periodo periodos[N_PER];
 static Tm_Timeout timeouts[N_TO];
@@ -84,6 +83,7 @@ static unsigned char i =0;
 char display_state = IDLE;
 char bits_Descarte;
 char flag_LI = FALSE;
+char flag_XOFF = FALSE;
 /*-----------------------------------------------------------------------*/
 
 static char atenderTimer(char atienda){
@@ -132,10 +132,12 @@ int main(void) {
 		if(atenderTimer(FALSE))
 			Tm_Procese(&c_tiempo);
 	    //PRINTF("Hola");
-		displayLowIntensity(PER_INT, 2,  &c);
+		//displayLowIntensity(PER_INT, 2,  &c);
 		//display(2);
 		//reception =	receiveChar();
-		enqueue(&buffer,receiveChar());
+		if(flag_XOFF){
+			enqueue(&buffer,receiveChar());
+		}
 		switch (display_state)
 		{
 			case IDLE:
@@ -148,8 +150,9 @@ int main(void) {
 				if(Tm_Hubo_periodo(&c_tiempo, PER_625)){
 					if(!(queueIsEmpty(&buffer))){
 						reception = dequeue(&buffer);
-						if(queueFull_75(&buffer)){
+						if(queueFull_75(&buffer) & !flag_XOFF){
 							stopCommunication();
+							flag_XOFF = TRUE;
 						}
 					}
 					/*Se evaluan los casos especiales*/
@@ -159,14 +162,13 @@ int main(void) {
 						break;
 						case 37:  //%
 							Tm_Inicie_timeout(&c_tiempo, N_TO_2S,1600);
-							State = INACTIVO;
+							display_state = INACTIVO;
 						break;
 						case 36: // $
 							tr_state = NORMAL_MODE;
 						break;
 						case 35: // #
 							flag_LI = TRUE;
-							Tm_Inicie_periodo(&c_tiempo, PER_INT, /*Cuanto es el tiempo?*/ );
 							Tm_Inicie_timeout(&c_tiempo, N_TO_5S,/*Tiempo de espera*/);
 						break;
 					}
@@ -181,29 +183,34 @@ int main(void) {
 							bits_Descarte = ~GET_LSB(reception, 4, 1);
 						break;
 					}
-					if(reception != 38 & reception != 37 & reception != 36 & reception != 35 & State != INACTIVO){
+					if(reception != 38 & reception != 37 & reception != 36 & reception != 35 & display_state != INACTIVO){
 						if(!flag_LI){
 							display(bits_Descarte);
 						}
 						else{
+							
 							displayLowIntensity(PER_INT, bits_Descarte, &c);
 							if(Tm_Hubo_timeout(&c_tiempo,N_TO_5S)){
 								flag_LI = FALSE;
+								Tm_Termine_timeout(&c_tiempo,N_TO_5S);
 							}
 						}
 						
 					}
+					Tm_Baje_periodo(&c_tiempo, PER_625);
 				}
 			break;
 			case INACTIVO:
 				displayOff();
 				if(Tm_Hubo_timeout(&c_tiempo,N_TO_2S)){
-					State = ACTIVO;
+					display_state = ACTIVO;
 				}
 			break;
+
 		}
-		if(queue_25(&buffer)){
+		if(queue_25(&buffer) & flag_XOFF){
 			startCommunication();
+			flag_XOFF = FALSE;
 		}
 		
 	
