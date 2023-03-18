@@ -28,9 +28,9 @@ void initUart1(){
 
     /*Disable UART before configuring*/
     UART1->C2 &= ~((1<<2)|(1<<3));
-    /* Set baud rate BDL =  clock/(16*9600)*/
+    /* Set baud rate BDL =  clock/(16*2400)*/
     UART1->BDH = 0x00;
-    UART1->BDL = 156;
+    UART1->BDL = 625;
 
     /*Non parity, 8bit normal mode*/
     UART1->C1 = 0x00;

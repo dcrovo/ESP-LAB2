@@ -20,8 +20,8 @@ struct Queue{
 void initQueue(Queue *queue, QNumT len);
 char dequeue(Queue *queue);
 void enqueue(Queue *queue, char element);
-char isEmpty(Queue *queue);
-char isFull(Queue *queue);
+char queueIsEmpty(Queue *queue);
+char queueIsFull(Queue *queue);
 char queueFull_75(Queue *queue);
 char queue_25(Queue *queue);
 void deleteQueue(Queue *queue);
