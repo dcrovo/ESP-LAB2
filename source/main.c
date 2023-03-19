@@ -59,7 +59,7 @@
 #define PER_INT  1
 #define N_TO_2S 0
 #define N_TO_5S 1
-#define Q_SIZE 256
+#define Q_SIZE 264
 /*Defnicion de periodos y timeouts*/
 #define N_PER 2
 #define N_TO 3
@@ -116,8 +116,8 @@ int main(void) {
 /*					Modules initialization									*/
 /*--------------------------------------------------------------------------*/
     Tm_Inicie(&c_tiempo, periodos, N_PER, timeouts, N_TO, &atenderTimer);
-    Tm_Inicie_periodo(&c_tiempo, PER_625, 200); /* periodo de 6.25ms*/
-    Tm_Inicie_periodo(&c_tiempo, PER_INT, 5); /* periodo de 625us*/
+    Tm_Inicie_periodo(&c_tiempo, PER_625, 10); /* periodo de 6.25ms*/
+    Tm_Inicie_periodo(&c_tiempo, PER_INT, 1); /* periodo de 625us*/
 	initDisplay();
     initPit(0xBB7,0); /*24000000*0.000125 - 1 ->125us*/
     initUart1();
@@ -133,6 +133,7 @@ int main(void) {
 
 		if(!flag_XOFF){
 			enqueue(&buffer,receiveChar());
+
 		}
 		switch (display_state)
 		{
@@ -146,6 +147,7 @@ int main(void) {
 				if(Tm_Hubo_periodo(&c_tiempo, PER_625)){
 					if(!(queueIsEmpty(&buffer))){
 						reception = dequeue(&buffer);
+						sendChar(reception);
 						if(queueFull_75(&buffer) & !flag_XOFF){
 							stopCommunication();
 							flag_XOFF = TRUE;
@@ -176,7 +178,8 @@ int main(void) {
 						break;
 
 						case NEG_MODE:
-							bits_Descarte = ~GET_LSB(reception, 4, 1);
+							bits_Descarte = 15-GET_LSB(reception, 4, 1);
+							/*sendChar(bits_Descarte);*/
 						break;
 					}
 					if((reception != 38) & (reception != 37) & (reception != 36) & (reception != 35) & (display_state != INACTIVO)){

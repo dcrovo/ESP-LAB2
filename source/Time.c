@@ -132,9 +132,9 @@ char Tm_Hubo_timeout (Tm_Control *tcp, Tm_Num num_timeout){
    Tm_Timeout *tp = tcp->tp + num_timeout;
    /*Returna  FALSE TRUE FALSE está en 0 y TRUE de lo contrario*/
    if(!*tp)
-      return FALSE;
-   else
       return TRUE;
+   else
+      return FALSE;
 }
 
 /* == FIN DE RUTINAS DE INTERFAZ == */
